@@ -1,0 +1,16 @@
+hash: ef9dc5df95bda3763d953205b5778ac9dccd7a4ea881cfa38153c715ced0b461
+updated: 2017-07-17T15:40:30.400080278+02:00
+imports:
+- name: github.com/apex/log
+  version: 8f3a15d95392c8fc202d1e1059f46df21dff2992
+- name: github.com/pkg/errors
+  version: c605e284fe17294bda444b34710735b29d1a9d90
+- name: github.com/stretchr/testify
+  version: 69483b4bd14f5845b5a1e55bca19e954e827f1d0
+  subpackages:
+  - assert
+- name: github.com/urfave/cli
+  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+- name: gopkg.in/jarcoal/httpmock.v1
+  version: cf52904a3cf0f78f199ecade6a6df8e245d5b25a
+testImports: []
