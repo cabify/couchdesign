@@ -58,11 +58,18 @@ func (a *AuthHttpRequester) run(req *http.Request, dest interface{}) error {
 			return err
 		}
 	}
-	fmt.Println(dest)
 
 	return nil
 }
 
 func (a *AuthHttpRequester) BaseUrl() string {
 	return a.baseUrl
+}
+
+func (a *AuthHttpRequester) Head(path string) error {
+	req, err := http.NewRequest("HEAD", fmt.Sprintf("%s%s", a.baseUrl, path), nil)
+	if err != nil {
+		return err
+	}
+	return a.run(req, nil)
 }

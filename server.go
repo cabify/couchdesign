@@ -25,7 +25,7 @@ func (s *Server) AllDbs(ahr *AuthHttpRequester) ([]*Database, error) {
 
 	dbs := make([]*Database, len(dbNames))
 	for i, dbName := range dbNames {
-		db, err := NewDatabase(dbName)
+		db, err := NewDatabase(dbName, ahr)
 		if err != nil {
 			return nil, err
 		}

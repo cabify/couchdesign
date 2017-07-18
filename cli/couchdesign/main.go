@@ -59,7 +59,7 @@ func main() {
 						return
 					}
 					for _, dd := range ddList {
-						fmt.Println(dd)
+						fmt.Println(dd.Id())
 					}
 				}
 			},

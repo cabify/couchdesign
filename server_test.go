@@ -63,6 +63,12 @@ func TestListAllDbs(t *testing.T) {
 	httpmock.RegisterResponder("GET", "http://127.0.0.1:5984/_all_dbs",
 		httpmock.NewStringResponder(200, `["db1", "db2"]`))
 
+	httpmock.RegisterResponder("HEAD", "http://127.0.0.1:5984/db1",
+		httpmock.NewStringResponder(200, ""))
+
+	httpmock.RegisterResponder("HEAD", "http://127.0.0.1:5984/db2",
+		httpmock.NewStringResponder(200, ""))
+
 	ahr, err := NewAuthHttpRequester("admin", "pass", "127.0.0.1")
 	assert.Nil(t, err)
 
