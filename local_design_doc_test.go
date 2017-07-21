@@ -10,7 +10,7 @@ import (
 )
 
 func TestLocalDesignDocumentsAreLoaded(t *testing.T) {
-	file, err := ioutil.TempFile("/tmp", "test_dd")
+	file, err := ioutil.TempFile("", "test_dd")
 	assert.Nil(t, err)
 
 	data := `
@@ -50,7 +50,7 @@ func TestLoadFailsIfFileIsNotFound(t *testing.T) {
 }
 
 func TestLoadFailsIfMalformedYAML(t *testing.T) {
-	file, err := ioutil.TempFile("/tmp", "test_dd")
+	file, err := ioutil.TempFile("", "test_dd")
 	assert.Nil(t, err)
 
 	data := "invalid yaml"
