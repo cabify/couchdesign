@@ -1,35 +1,46 @@
 package couchdesign
 
-import "github.com/apex/log"
+import (
+	"strings"
+
+	"github.com/apex/log"
+)
 
 type Server struct {
 	Version string `json:"version"`
 	Uuid    string `json:"uuid"`
+	ahr     *AuthHttpRequester
 }
 
 func NewServer(ahr *AuthHttpRequester) (*Server, error) {
 	log.WithField("server", ahr.BaseUrl()).Info("Connecting to server...")
-	var s Server
-	if err := ahr.Get("", &s); err != nil {
+	s := &Server{
+		ahr: ahr,
+	}
+	if err := ahr.Get("", s); err != nil {
+		log.WithError(err).WithField("server", ahr.baseUrl).Error("Couldn't connect with server")
 		return nil, err
 	}
-	return &s, nil
+	return s, nil
 }
 
-func (s *Server) AllDbs(ahr *AuthHttpRequester) ([]*Database, error) {
+func (s *Server) AllDbs() ([]Database, error) {
 	var dbNames []string
-	log.WithField("server", ahr.BaseUrl()).Info("Listing databases at server...")
-	if err := ahr.Get("_all_dbs", &dbNames); err != nil {
+	log.WithField("server", s.ahr.BaseUrl()).Info("Listing databases at server...")
+	if err := s.ahr.Get("_all_dbs", &dbNames); err != nil {
 		return nil, err
 	}
 
-	dbs := make([]*Database, len(dbNames))
-	for i, dbName := range dbNames {
-		db, err := NewDatabase(dbName, ahr)
+	dbs := make([]Database, 0)
+	for _, dbName := range dbNames {
+		if strings.HasPrefix(dbName, "_") {
+			continue
+		}
+		db, err := NewRemoteDatabase(dbName, s.ahr)
 		if err != nil {
 			return nil, err
 		}
-		dbs[i] = db
+		dbs = append(dbs, db)
 	}
 	return dbs, nil
 }
