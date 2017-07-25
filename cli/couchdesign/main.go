@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/apex/log"
@@ -40,28 +39,6 @@ func main() {
 				serverUrl := c.GlobalString("server")
 				log.WithField("server", serverUrl).Info("Retrieving design docs statses...")
 				authHttpReq := buildAuthHttpReq(c)
-				server, err := couchdesign.NewServer(authHttpReq)
-				if err != nil {
-					log.WithError(err).WithField("server", serverUrl).Error("Couldn't connect with server")
-					return
-				}
-
-				dbList, err := server.AllDbs(authHttpReq)
-				if err != nil {
-					log.WithError(err).Error("Could not get all databases!")
-					return
-				}
-
-				for _, db := range dbList {
-					ddList, err := db.AllDesignDocs(authHttpReq)
-					if err != nil {
-						log.WithError(err).WithField("database", db.Name()).Error("Could not get design docs!")
-						return
-					}
-					for _, dd := range ddList {
-						fmt.Println(dd.Id())
-					}
-				}
 			},
 		},
 	}

@@ -27,7 +27,7 @@ func NewLocalDatabase(localDir string) (*LocalDatabase, error) {
 	}, nil
 }
 
-func (d *LocalDatabase) AllDesignDocs() ([]DesignDoc, error) {
+func (d *LocalDatabase) AllDesignDocs() (map[string]DesignDocsIndex, error) {
 	log.WithField("database", d.name).Info("Reading local design docs list...")
 	ddList, err := ioutil.ReadDir(d.localDir)
 	if err != nil {
@@ -35,22 +35,15 @@ func (d *LocalDatabase) AllDesignDocs() ([]DesignDoc, error) {
 		return nil, err
 	}
 
-	dds := make([]DesignDoc, 0)
+	dds := make(map[string]DesignDocsIndex, len(ddList))
 	for _, ddName := range ddList {
-		ddBaseDir := fmt.Sprintf("%s/%s", d.localDir, ddName.Name())
-		ddVersions, err := ioutil.ReadDir(ddBaseDir)
+		idx, err := NewLocalDesignDocsIndex(d.localDir, ddName.Name())
 		if err != nil {
-			log.WithError(err).WithFields(log.Fields{"database": d.name, "design_doc": ddName}).Error("Could not read dd's dir")
+			log.WithError(err).WithFields(log.Fields{"database": d.name, "design_doc": ddName.Name()}).
+				Error("Could not create the local design docs index!")
 			return nil, err
 		}
-		for _, ddVersionName := range ddVersions {
-			dd, err := NewLocalDesignDoc(fmt.Sprintf("%s/%s", ddBaseDir, ddVersionName.Name()))
-			if err != nil {
-				log.WithError(err).WithFields(log.Fields{"database": d.name, "design_doc": ddName, "version": ddVersionName}).Error("Could not create dd version!")
-				return nil, err
-			}
-			dds = append(dds, dd)
-		}
+		dds[ddName.Name()] = idx
 	}
 
 	return dds, nil
