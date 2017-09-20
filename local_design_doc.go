@@ -43,5 +43,5 @@ func (d *LocalDesignDoc) Id() string {
 }
 
 func (d *LocalDesignDoc) Md5() string {
-	return DesignDocMd5(d.Contents)
+	return DesignDocMd5(d.Id(), d.Contents)
 }

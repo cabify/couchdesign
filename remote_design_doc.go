@@ -29,5 +29,5 @@ func designDocNameFromId(id string) string {
 }
 
 func (d *RemoteDesignDoc) Md5() string {
-	return DesignDocMd5(d.Contents)
+	return DesignDocMd5(d.Id(), d.Contents)
 }

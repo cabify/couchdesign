@@ -20,6 +20,7 @@ func TestLocalDesignDocumentsAreLoaded(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.Equal(t, "test_dd", dd.Id())
+	assert.Equal(t, "4b30ab1cb9d313df921c1073a3b15f70", dd.Md5())
 	assert.Equal(t, "javascript", dd.Contents.Language)
 	assert.Len(t, dd.Contents.Views, 3)
 	assert.Contains(t, dd.Contents.Views, "by_user_id_and_created_at")

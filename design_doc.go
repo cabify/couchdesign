@@ -4,11 +4,14 @@ import (
 	"crypto/md5"
 	"fmt"
 	"io"
+	"reflect"
+	"sort"
 	"strconv"
 )
 
 type DesignDocContents struct {
 	FullId            string              `json:"_id"`
+	Rev               string              `json:"_rev"`
 	Language          string              `json:"language"`
 	Options           map[string]bool     `json:"options"`
 	Filters           map[string]Function `json:"filters"`
@@ -24,50 +27,58 @@ type DesignDoc interface {
 	Md5() string
 }
 
-func DesignDocMd5(d DesignDocContents) string {
+func DesignDocMd5(id string, d DesignDocContents) string {
 	h := md5.New()
 
-	io.WriteString(h, d.FullId)
+	io.WriteString(h, id)
+	fmt.Println(d.FullId)
 
 	io.WriteString(h, "Language")
 	io.WriteString(h, d.Language)
 
 	io.WriteString(h, "Options")
-	for key, opt := range d.Options {
+	keys := sortedKeys(reflect.ValueOf(d.Options))
+	for _, key := range keys {
 		io.WriteString(h, key)
-		io.WriteString(h, strconv.FormatBool(opt))
+		io.WriteString(h, strconv.FormatBool(d.Options[key]))
 	}
 
 	io.WriteString(h, "Filters")
-	for key, filter := range d.Filters {
+	keys = sortedKeys(reflect.ValueOf(d.Filters))
+	for _, key := range keys {
 		io.WriteString(h, key)
-		io.WriteString(h, string(filter))
+		io.WriteString(h, string(d.Filters[key]))
 	}
 
 	io.WriteString(h, "Lists")
-	for key, list := range d.Lists {
+	keys = sortedKeys(reflect.ValueOf(d.Lists))
+	for _, key := range keys {
 		io.WriteString(h, key)
-		io.WriteString(h, string(list))
+		io.WriteString(h, string(d.Lists[key]))
 	}
 
 	io.WriteString(h, "Shows")
-	for key, show := range d.Shows {
+	keys = sortedKeys(reflect.ValueOf(d.Shows))
+	for _, key := range keys {
 		io.WriteString(h, key)
-		io.WriteString(h, string(show))
+		io.WriteString(h, string(d.Shows[key]))
 	}
 
 	io.WriteString(h, "Updates")
-	for key, update := range d.Updates {
+	keys = sortedKeys(reflect.ValueOf(d.Updates))
+	for _, key := range keys {
 		io.WriteString(h, key)
-		io.WriteString(h, string(update))
+		io.WriteString(h, string(d.Updates[key]))
 	}
 
 	io.WriteString(h, "ValidateDocUpdate")
 	io.WriteString(h, string(d.ValidateDocUpdate))
 
 	io.WriteString(h, "Views")
-	for key, view := range d.Views {
+	keys = sortedKeys(reflect.ValueOf(d.Views))
+	for _, key := range keys {
 		io.WriteString(h, key)
+		view := d.Views[key]
 		if view.Map != nil {
 			io.WriteString(h, string(*view.Map))
 		}
@@ -77,4 +88,17 @@ func DesignDocMd5(d DesignDocContents) string {
 	}
 
 	return fmt.Sprintf("%x", h.Sum(nil))
+}
+
+func sortedKeys(data reflect.Value) []string {
+	values := data.MapKeys()
+	keys := make([]string, len(values))
+	i := 0
+	for _, k := range values {
+		keys[i] = k.String()
+		i++
+	}
+
+	sort.Strings(keys)
+	return keys
 }
