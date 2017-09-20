@@ -1,8 +1,6 @@
 package couchdesign
 
 import (
-	"fmt"
-
 	"github.com/apex/log"
 )
 
@@ -25,27 +23,26 @@ func NewRemoteDatabase(name string, ahr *AuthHttpRequester) (*RemoteDatabase, er
 	return db, nil
 }
 
-func (d *RemoteDatabase) AllDesignDocs() ([]DesignDoc, error) {
+func (d *RemoteDatabase) AllDesignDocs() (map[string]DesignDocsIndex, error) {
 	log.WithField("database", d.name).Info("Fetching Design docs list...")
-	var data struct {
-		Rows []struct {
-			Id string `json:"id"`
-		} `json:"rows"`
-	}
-	if err := d.ahr.Get(fmt.Sprintf("%s/_all_docs?startkey=\"_design/\"&endkey=\"_design0\"", d.name), &data); err != nil {
-		return nil, err
-	}
+	//var data struct {
+	//	Rows []struct {
+	//		Id string `json:"id"`
+	//	} `json:"rows"`
+	//}
+	//if err := d.ahr.Get(fmt.Sprintf("%s/_all_docs?startkey=\"_design/\"&endkey=\"_design0\"", d.name), &data); err != nil {
+	//	return nil, err
+	//}
+	//
+	//for i, ddInfo := range data.Rows {
+	//	dd, err := NewRemoteDesignDoc(d.name, designDocNameFromId(ddInfo.Id), d.ahr)
+	//	if err != nil {
+	//		return nil, err
+	//	}
+	//	dds[i] = dd
+	//}
 
-	dds := make([]DesignDoc, len(data.Rows))
-	for i, ddInfo := range data.Rows {
-		dd, err := NewRemoteDesignDoc(d.name, designDocNameFromId(ddInfo.Id), d.ahr)
-		if err != nil {
-			return nil, err
-		}
-		dds[i] = dd
-	}
-
-	return dds, nil
+	return nil, nil
 }
 
 func (d *RemoteDatabase) Name() string {

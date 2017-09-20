@@ -1,6 +1,6 @@
 package couchdesign
 
 type Database interface {
-	AllDesignDocs() ([]DesignDoc, error)
+	AllDesignDocs() (map[string]DesignDocsIndex, error)
 	Name() string
 }
